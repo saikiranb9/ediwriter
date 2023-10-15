@@ -1,0 +1,122 @@
+{
+  "data": {
+    "interchanges": [
+      {
+        "ISA_01_AuthorizationQualifier": "00",
+        "ISA_02_AuthorizationInformation": "  ",
+        "ISA_03_SecurityQualifier": "00",
+        "ISA_04_SecurityInformation": "  ",
+        "ISA_05_SenderQualifier": "12",
+        "ISA_06_SenderId": "7047353003",
+        "ISA_07_ReceiverQualifier": "01",
+        "ISA_08_ReceiverId": "061877247",
+        "ISA_09_Date": "230731",
+        "ISA_10_Time": "1638",
+        "ISA_11_StandardsId": "U",
+        "ISA_12_Version": "00401",
+        "ISA_13_InterchangeControlNumber": "487",
+        "ISA_14_AcknowledgementRequested": "1",
+        "ISA_15_TestIndicator": "T",
+        "functional_groups": [
+          {
+            "GS_01_FunctionalIdentifierCode": "IN",
+            "GS_02_ApplicationSenderCode": "7047353003",
+            "GS_03_ApplicationReceiverCode": "061877247",
+            "GS_04_Date": "20230731",
+            "GS_05_Time": "1638",
+            "GS_06_GroupControlNumber": "488",
+            "GS_07_ResponsibleAgencyCode": "X",
+            "GS_08_Version": "004010",
+            "transactions": [
+              {
+                "ST_01_TransactionSetIdentifierCode": "810",
+                "ST_02_TransactionSetControlNumber": "0001",
+                "segments": [
+                  {
+                    "BIG_01": "20230624",
+                    "BIG_02": "S183236053",
+                    "BIG_03": "20230624",
+                    "BIG_07": "CI"
+                  },
+                  {					
+                    "CUR_01": "BT",
+                    "CUR_02": "USD"
+                  },
+                  {
+                    "N1-1000_loop": [
+                      {						
+                        "N1_01": "RI",
+                        "N1_02": "American Tire Distributors, Inc.",
+                        "N1_03": "92",
+                        "N1_04": "ATD01"
+                      },
+                      {
+                        "N3_01": "PO Box 889"
+                      },
+                      {
+                        "N4_01": "HUNTERSVILLE",
+                        "N4_02": "NC",
+                        "N4_03": "28070-3145",
+                        "N4_04": "US"
+                      }
+                    ]
+                  },
+                  {
+                    "N1-1000_loop": [
+                      {
+                        "N1_01": "SF",
+                        "N1_02": "AEIL",
+                        "N1_03": "92",
+                        "N1_04": "AEIL"
+                      }
+                    ]
+                  },
+                  {
+                    "ITD_01": "01",
+                    "ITD_02": "3",
+                    "ITD_06": "20230710",
+                    "ITD_07": "null",
+                    "ITD_12": "NET 10th PROX"
+                  },
+                  {
+                    "IT1-6000_loop": [
+                      {
+                        "IT1_01": "1",
+                        "IT1_02": "1",
+                        "IT1_03": "EA",
+                        "IT1_04": "11.29",
+                        "IT1_05": "NT",
+                        "IT1_06": "SK",
+                        "IT1_07": "A160852",
+                        "IT1_08": "PO",
+                        "IT1_09": "4780768007",
+                        "IT1_10": "VO",
+                        "IT1_11": "235501211",
+                        "IT1_12": "ON",
+                        "IT1_13": "0"
+                      }
+                    ]
+                  },
+                  {
+                    "TDS_01": "1129"
+                  },
+                  {
+                    "CTT_01": "1",
+                    "CTT_02": "1"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "fileName": "AMAZON_ATD_810",
+  "partnerName": "amazon",
+  "partnerPrefix": "01",
+  "partnerBody": "061877247",
+  "terminator": "~",
+  "delimiter": "^",
+  "subDelimiter": "+"
+}

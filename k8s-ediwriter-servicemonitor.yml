@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ediwriter
+  namespace: monitoring
+  labels:
+    k8s-app: ediwriter
+spec:
+  jobLabel: k8s-app
+  endpoints:
+  - path: /actuator/prometheus
+    port: web
+    interval: 1s
+    honorLabels: true
+  selector:
+    matchLabels:
+      k8s-app: ediwriter
+  namespaceSelector:
+    matchNames:
+    - edi-platform

@@ -1,0 +1,160 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ServiceName
+  labels:
+    app: ServiceName
+    deployon: "dsr"
+spec:
+  replicas: replace_replicas
+  selector:
+    matchLabels:
+      app: ServiceName
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ServiceName
+        deployon: "dsr"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - ServiceName
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+      - image: image_to_be_deployed
+        imagePullPolicy: Always
+        name: ServiceName
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - bash
+              - -c
+              - |
+                apt-get update -y && apt-get install -y gnupg lsb-release wget procps && \
+                lsb_release -c -s > /tmp/lsb_release && GCSFUSE_REPO=$(cat /tmp/lsb_release); echo "deb http://packages.cloud.google.com/apt gcsfuse-$GCSFUSE_REPO main" | tee /etc/apt/sources.list.d/gcsfuse.list && wget -O - https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+                apt-get update -y && apt-get install -y gcsfuse && \
+                mkdir -p /edi-outbound-files && gcsfuse --only-dir edi/AS2/outbox ${EDI_SERVER} /edi-outbound-files
+          preStop:
+            exec:
+              command:
+              - fusermount
+              - -u
+              - /edi-outbound-files
+        ports:
+        - containerPort: 9305
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 9305
+          initialDelaySeconds: 120
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 9305
+          initialDelaySeconds: 60
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "2"
+          limits:
+            memory: "2Gi"
+            cpu: "4"
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        env:
+          # APIGATEWAY URL
+          - name: APIGATEWAY_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ediwriter-configmap
+                key: apigateway.url
+          - name: ENV_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ediwriter-configmap
+                key: replace_logical_env.host.name
+          - name: EDI_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: ediwriter-configmap
+                key: replace_logical_env.edi.server.value
+          - name: JAEGER_COLLECTOR_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ediwriter-configmap
+                key: jaeger.collector.url   
+          - name: EDIWRITER_EDIANALYTICSDATA_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ediwriter-configmap
+                key: ediAnalyticsDataUrl
+          - name: EDICONFIG_GETBYPARTNER_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ediwriter-configmap
+                key: ediwriter.ediConfigUrl
+          - name: EDICOREDATA_SAVESINGLEDOC_URL
+            valueFrom:
+              configMapKeyRef:
+                name: ediwriter-configmap
+                key: ediwriter.saveSingledocUrl
+
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: SvcName
+  labels:
+    app: ServiceName
+    k8s-app: ediwriter
+spec:
+  selector:
+    app: ServiceName
+  type: ClusterIP
+  ports:
+  - port: 9305
+    name: web
+    targetPort: 9305
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler 
+metadata: 
+  name: ediwriter
+spec: 
+  maxReplicas: replace_maxReplicas
+  minReplicas: replace_minReplicas
+  scaleTargetRef: 
+    apiVersion: apps/v1 
+    kind: Deployment 
+    name: hpaSrvName
+  metrics: 
+  - type: Resource 
+    resource: 
+      name: cpu
+      targetAverageUtilization: 70

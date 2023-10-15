@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: ediwriter    #service name
+server:
+  port: 9305
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
